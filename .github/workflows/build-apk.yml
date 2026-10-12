@@ -4,7 +4,8 @@ name: Build Site Photo Pro APK
 on:
   workflow_dispatch:
   push:
-    branches: ["main"]
+    branches:
+      - main
 
 permissions:
   contents: read
@@ -12,7 +13,6 @@ permissions:
 jobs:
   build-apk:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
@@ -23,20 +23,19 @@ jobs:
           cp -a SitePhotoPro/. .
           rm -rf SitePhotoPro
 
-      - name: Set up Java 17
+      - name: Set up Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: "17"
-- name: Set up Android SDK
-  uses: android-actions/setup-android@v3
 
-- name: Install Android SDK packages
-  run: |
-    sdkmanager --licenses
-    sdkmanager "platforms;android-35" "build-tools;35.0.0"
-    
-  - name: Set up Gradle
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install SDK packages
+        run: sdkmanager "platforms;android-35" "build-tools;35.0.0"
+
+      - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: "8.7"
@@ -50,4 +49,3 @@ jobs:
           name: SitePhotoPro-debug-apk
           path: app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
-          retention-days: 14
